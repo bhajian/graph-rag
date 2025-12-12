@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: langgraph-backend
+  namespace: ${NAMESPACE}
+spec:
+  to:
+    kind: Service
+    name: langgraph-backend
+  port:
+    targetPort: 8000
+  tls:
+    termination: edge

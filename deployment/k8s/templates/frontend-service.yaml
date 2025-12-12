@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: langgraph-frontend
+  namespace: ${NAMESPACE}
+spec:
+  selector:
+    app: langgraph-frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

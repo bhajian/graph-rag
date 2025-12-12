@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: langgraph-config
+  namespace: ${NAMESPACE}
+data:
+  LLAMA_API_URL: ${LLAMA_API_URL}
+  LLAMA_MODEL: ${LLAMA_MODEL}
+  NEO4J_URI: ${NEO4J_URI}
+  NEO4J_USER: ${NEO4J_USER}
+  NEO4J_DATABASE: ${NEO4J_DATABASE}
+  NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}

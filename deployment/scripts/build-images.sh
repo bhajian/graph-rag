@@ -19,15 +19,15 @@ build_cmd() {
   local dockerfile="$4"
 
   echo "\n==> Building ${image} for ${PLATFORM} using ${dockerfile}"
-  local extra_args=()
+  local -a extra_args=()
   if [[ "${component}" == "frontend" ]]; then
     extra_args+=(--build-arg "NEXT_PUBLIC_API_BASE_URL=${FRONTEND_PUBLIC_API_BASE_URL}")
   fi
 
   if [[ "${PUSH}" == "true" ]]; then
-    docker buildx build --platform "${PLATFORM}" -f "${dockerfile}" -t "${image}" "${context}" "${extra_args[@]}" --push
+    docker buildx build --platform "${PLATFORM}" -f "${dockerfile}" -t "${image}" "${context}" ${extra_args+"${extra_args[@]}"} --push
   else
-    docker buildx build --platform "${PLATFORM}" -f "${dockerfile}" -t "${image}" "${context}" "${extra_args[@]}" --load
+    docker buildx build --platform "${PLATFORM}" -f "${dockerfile}" -t "${image}" "${context}" ${extra_args+"${extra_args[@]}"} --load
   fi
 }
 

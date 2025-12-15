@@ -5,6 +5,7 @@ set -euo pipefail
 : "${BACKEND_IMAGE_NAME:=langgraph-backend}"
 : "${FRONTEND_IMAGE_NAME:=langgraph-frontend}"
 : "${IMAGE_TAG:=latest}"
+: "${FRONTEND_PUBLIC_API_BASE_URL:=http://langgraph-backend:8000}"
 PLATFORM="${PLATFORM:-linux/amd64}"
 PUSH="${PUSH:-true}"
 
@@ -18,10 +19,15 @@ build_cmd() {
   local dockerfile="$4"
 
   echo "\n==> Building ${image} for ${PLATFORM} using ${dockerfile}"
+  local extra_args=()
+  if [[ "${component}" == "frontend" ]]; then
+    extra_args+=(--build-arg "NEXT_PUBLIC_API_BASE_URL=${FRONTEND_PUBLIC_API_BASE_URL}")
+  fi
+
   if [[ "${PUSH}" == "true" ]]; then
-    docker buildx build --platform "${PLATFORM}" -f "${dockerfile}" -t "${image}" "${context}" --push
+    docker buildx build --platform "${PLATFORM}" -f "${dockerfile}" -t "${image}" "${context}" "${extra_args[@]}" --push
   else
-    docker buildx build --platform "${PLATFORM}" -f "${dockerfile}" -t "${image}" "${context}" --load
+    docker buildx build --platform "${PLATFORM}" -f "${dockerfile}" -t "${image}" "${context}" "${extra_args[@]}" --load
   fi
 }
 

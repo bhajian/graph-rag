@@ -1,5 +1,4 @@
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = "/api";
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -10,7 +9,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export async function ingestData(payload: { text: string; source?: string }) {
-  const response = await fetch(`${API_BASE_URL}/api/ingest`, {
+  const response = await fetch(`${API_BASE_URL}/ingest`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -37,7 +36,7 @@ export async function sendChat(body: {
   message: string;
   history: ChatMessage[];
 }): Promise<ChatResult> {
-  const response = await fetch(`${API_BASE_URL}/api/chat`, {
+  const response = await fetch(`${API_BASE_URL}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

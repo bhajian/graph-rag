@@ -51,10 +51,13 @@ deployment/ scripts and OpenShift/Kubernetes templates
    uvicorn app.main:app --reload --port 8000
 
    # Frontend
-   cd ../frontend
-   npm install
-   echo "NEXT_PUBLIC_API_BASE_URL=http://localhost:8000" > .env.local
-   npm run dev
+  cd ../frontend
+  npm install
+  cat <<'EOF' > .env.local
+  BACKEND_API_BASE_URL=http://localhost:8000
+  NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+  EOF
+  npm run dev
    ```
 
 ## Building linux/amd64 images for OpenShift
@@ -64,6 +67,8 @@ Use the helper script to cross-compile x86 images from your ARM laptop. Provide 
 ```bash
 export REGISTRY=quay.io/your-org
 export IMAGE_TAG=openshift
+# optional: override the baked-in frontend public API base
+# export FRONTEND_PUBLIC_API_BASE_URL=http://langgraph-backend:8000
 # Optional: disable pushing by setting PUSH=false (defaults true)
 docker login
 ./deployment/scripts/build-images.sh
@@ -74,6 +79,7 @@ Variables:
 - `BACKEND_IMAGE_NAME`, `FRONTEND_IMAGE_NAME` – defaults `langgraph-backend` / `langgraph-frontend`.
 - `IMAGE_TAG` – defaults `latest`.
 - `PLATFORM` – defaults `linux/amd64`.
+- `FRONTEND_PUBLIC_API_BASE_URL` – baked into the frontend bundle; defaults `http://langgraph-backend:8000`.
 - `PUSH` – `true` pushes via Buildx, `false` loads into the local daemon.
 
 ## Build & push linux/amd64 images
@@ -114,7 +120,8 @@ Once the script finishes (and `docker login` is configured for your registry), t
    export FRONTEND_IMAGE=quay.io/your-org/langgraph-frontend:openshift
    export NEO4J_PASSWORD=Neo4jStrongPassword123
    # optional overrides
-   export NEXT_PUBLIC_API_BASE_URL=http://langgraph-backend:8000
+   export BACKEND_API_BASE_URL=http://langgraph-backend:8000
+   export NEXT_PUBLIC_API_BASE_URL=$BACKEND_API_BASE_URL
 
    ./deployment/scripts/deploy-openshift.sh
    ```
